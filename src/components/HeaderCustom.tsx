@@ -3,15 +3,15 @@
  */
 import React, { Component } from 'react';
 import screenfull from 'screenfull';
-import avater from '../style/imgs/b1.jpg';
-import SiderCustom from './SiderCustom';
 import { Menu, Icon, Layout, Badge, Popover } from 'antd';
-import { gitOauthToken, gitOauthInfo } from '../axios';
-import { queryString } from '../utils';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { PwaInstaller } from './widget';
 import { connectAlita } from 'redux-alita';
 import umbrella from 'umbrella-storage';
+import queryString from 'query-string';
+import avater from '../style/imgs/b1.jpg';
+import SiderCustom from './SiderCustom';
+import { gitOauthToken, gitOauthInfo } from '../axios';
+import { PwaInstaller } from './widget';
 const { Header } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -34,12 +34,11 @@ class HeaderCustom extends Component<HeaderCustomProps, HeaderCustomState> {
         visible: false,
     };
     componentDidMount() {
-        const QueryString = queryString() as any;
+        const query = queryString.parseUrl(window.location.href).query;
         let storageUser = umbrella.getLocalStorage('user');
 
-        // _user = (storageUser && JSON.parse(storageUser)) || '测试';
-        if (!storageUser && QueryString.hasOwnProperty('code')) {
-            gitOauthToken(QueryString.code).then((res: any) => {
+        if (!storageUser && query.code) {
+            gitOauthToken(query.code as string).then((res: any) => {
                 gitOauthInfo(res.access_token).then((info: any) => {
                     this.setState({
                         user: info,
